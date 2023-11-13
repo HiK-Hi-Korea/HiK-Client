@@ -1,6 +1,7 @@
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import DrawerNavigator from './src/utils/DrawerNavigator';
+import { Map } from './src/screens/Map';
 
 function App() {
   // const isDarkMode = useColorScheme() === 'dark';
@@ -8,9 +9,10 @@ function App() {
   //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   // };
   return (
-    <NavigationContainer>
-      <DrawerNavigator />
-    </NavigationContainer>
+    // <NavigationContainer>
+    //   <DrawerNavigator />
+    // </NavigationContainer>
+    <Map />
   );
 }
 
