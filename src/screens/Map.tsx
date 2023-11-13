@@ -1,39 +1,58 @@
 import React from 'react';
-import {SafeAreaView, Text, View} from 'react-native';
+import {Button} from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 import {StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 import {G_API_KEY} from '@env';
 
 //google map
-import MapView, {Marker, PROVIDER_GOOGLE, UrlTile} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import {useSetRecoilState} from 'recoil';
+import {LocationTypeAtom} from '../assets/recoilValues';
 
 Geolocation.requestAuthorization('whenInUse');
 
-export const Map = () => {
-  const [location, setLocation] = React.useState({
-    latitude: 37.50377,
-    longitude: 126.955799,
-  });
+interface IType {
+  latitude: number | undefined;
+  longitude: number | undefined;
+}
+
+export const Map = ({navigation}) => {
+  const [location, setLocation] = React.useState<IType | undefined>(undefined);
+  // const [triggerFunc, setTriggerFunc] = React.useState(false);
+  const setLocationType = useSetRecoilState(LocationTypeAtom);
 
   const mApiKey = G_API_KEY;
 
+  const addTypeList = ['university', 'store'];
+
   const getAddress = () => {
     fetch(
-      'https://maps.googleapis.com/maps/api/geocode/json?address=' +
-        location.latitude +
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+        location?.latitude +
         ',' +
-        location.longitude +
-        +'&key=' +
+        location?.longitude +
+        '&key=' +
         mApiKey +
         '&language=ko',
     )
       .then(response => response.json())
       .then(responseJson => {
-        console.log('udonPeople ' + responseJson.results[0].formatted_address);
+        // console.log('udonPeople ' + responseJson.results[0].formatted_address);
+        console.log('udonPeople ' + responseJson.results[0].types);
+        const returnLocList = responseJson.result[0].types;
+        for (const element of returnLocList) {
+          if (element in addTypeList) {
+            setLocationType(element);
+            break;
+          }
+          // else {
+          //   setLocationType('none');
+          // }
+        }
       })
       .catch(err => console.log('udonPeople error : ' + err));
-  }
+  };
 
   React.useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -46,36 +65,50 @@ export const Map = () => {
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
+    // getAddress();
   }, []);
+
+  // const toYesFunc = () => {
+  //   setTriggerFunc(true);
+  //   navigation.navigate('Home', {screen: 'Translation'});
+  // };
 
   return (
     // <SafeAreaView>
     <Wrapper>
-      <MapView
-        initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
-          latitudeDelta: 0.005,
-          longitudeDelta: 0.005,
-        }}
-        style={[styles.map]}
-        provider={PROVIDER_GOOGLE}
-        showsUserLocation={true}
-        showsMyLocationButton={true}>
-        <Marker
-          coordinate={{
+      {location?.latitude && location?.longitude && (
+        <MapView
+          initialRegion={{
             latitude: location.latitude,
             longitude: location.longitude,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
           }}
-          // title="this is a marker"
-          // description="this is a marker example"
+          style={[styles.map]}
+          provider={PROVIDER_GOOGLE}
+          showsUserLocation={true}
+          showsMyLocationButton={true}
         />
-      </MapView>
-      <SafeAreaView>
-        <LocationInfoTab>
-          <Text>component Test</Text>
-        </LocationInfoTab>
-      </SafeAreaView>
+      )}
+      <LocationInfoTab>
+        <AskText>Are you here now?</AskText>
+        <Button
+          title="Yes"
+          onPress={() => {
+            getAddress();
+            // navigation.navigate('Home', {screen: 'Translation'});
+            navigation.navigate('Selection');
+          }}
+        />
+        <Button title="No" onPress={() => navigation.navigate('Selection')} />
+        <Button
+          title="on-line contents"
+          onPress={() => {
+            setLocationType('online');
+            navigation.navigate('Home', {screen: 'Translation'});
+          }}
+        />
+      </LocationInfoTab>
     </Wrapper>
   );
 };
@@ -87,7 +120,18 @@ const Wrapper = styled.View`
 
 const LocationInfoTab = styled.View`
   display: flex;
-  height: 30%;
+  flex-direction: column;
+  height: 25%;
+  /* justify-content: center; */
+  align-items: center;
+  padding-top: 20px;
+  padding-left: 20px;
+`;
+
+const AskText = styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
 `;
 
 const styles = StyleSheet.create({
