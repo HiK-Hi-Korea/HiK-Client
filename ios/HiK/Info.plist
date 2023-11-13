@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>We record your voice for usage of voice recognition.</string>
+	<string>We record your voice for usage of stt</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>We use microphone for usage of voice recognition.</string>
+	<string>We use microphone for usage of stt</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
