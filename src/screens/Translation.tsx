@@ -11,6 +11,8 @@ import {PlaySoundBtn} from '../utils/PlaySoundBtn';
 import Voice from '@react-native-voice/voice';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {CopyBtn} from '../utils/CopyBtn';
+import { useRecoilValue } from 'recoil';
+import { LocationTypeAtom } from '../assets/recoilValues';
 
 // var Sound = require('react-native-sound');
 // Sound.setCategory('Playback');
@@ -31,6 +33,7 @@ export default function Translation() {
     {label: 'Child', value: 'child'},
     {label: 'Others', value: 'others'},
   ]);
+  const location = useRecoilValue(LocationTypeAtom);
 
   React.useEffect(() => {
     setPressed(false);
@@ -150,7 +153,7 @@ export default function Translation() {
       <ViewContent>
         <Container>
           <LocationBox>
-            <LocationText>Your Location Is...</LocationText>
+            <LocationText>Your Location Is... {location}</LocationText>
           </LocationBox>
           <FilterContour>
             <Text style={{color: 'white'}}>Talk with</Text>
