@@ -1727,6 +1727,11 @@
     prompts "^2.4.0"
     semver "^7.5.2"
 
+"@react-native-community/masked-view@^0.1.11":
+  version "0.1.11"
+  resolved "https://registry.npmjs.org/@react-native-community/masked-view/-/masked-view-0.1.11.tgz"
+  integrity sha512-rQfMIGSR/1r/SyN87+VD8xHHzDYeHaJq6elOSCAD+0iLagXkSI2pfA0LmSXP21uw5i3em7GkkRjfJ8wpqWXZNw==
+
 "@react-native-voice/voice@^3.1.5":
   version "3.1.5"
   resolved "https://registry.npmjs.org/@react-native-voice/voice/-/voice-3.1.5.tgz"
@@ -5802,7 +5807,7 @@ react-native-dropdown-picker@^5.4.6:
   resolved "https://registry.npmjs.org/react-native-dropdown-picker/-/react-native-dropdown-picker-5.4.6.tgz"
   integrity sha512-T1XBHbE++M6aRU3wFYw3MvcOuabhWZ29RK/Ivdls2r1ZkZ62iEBZknLUPeVLMX3x6iUxj4Zgr3X2DGlEGXeHsA==
 
-"react-native-gesture-handler@>= 1.0.0":
+react-native-gesture-handler@^2.13.4, "react-native-gesture-handler@>= 1.0.0":
   version "2.13.4"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.13.4.tgz"
   integrity sha512-smpYOVbvWABpq2H+lmDnfOLCTH934aUPO1w2/pQXvm1j+M/vmGQmvgRDJOpXcks17HLtNNKXD6tcODf3aPqDfA==
@@ -5813,7 +5818,7 @@ react-native-dropdown-picker@^5.4.6:
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
-"react-native-reanimated@>= 1.0.0":
+react-native-reanimated@^3.5.4, "react-native-reanimated@>= 1.0.0":
   version "3.5.4"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.5.4.tgz"
   integrity sha512-8we9LLDO1o4Oj9/DICeEJ2K1tjfqkJagqQUglxeUAkol/HcEJ6PGxIrpBcNryLqCDYEcu6FZWld/FzizBIw6bg==
@@ -5823,12 +5828,12 @@ react-native-dropdown-picker@^5.4.6:
     convert-source-map "^2.0.0"
     invariant "^2.2.4"
 
-"react-native-safe-area-context@>= 3.0.0":
+react-native-safe-area-context@^4.7.4, "react-native-safe-area-context@>= 3.0.0":
   version "4.7.4"
   resolved "https://registry.npmjs.org/react-native-safe-area-context/-/react-native-safe-area-context-4.7.4.tgz"
   integrity sha512-3LR3DCq9pdzlbq6vsHGWBFehXAKDh2Ljug6jWhLWs1QFuJHM6AS2+mH2JfKlB2LqiSFZOBcZfHQFz0sGaA3uqg==
 
-"react-native-screens@>= 3.0.0":
+react-native-screens@^3.27.0, "react-native-screens@>= 3.0.0":
   version "3.27.0"
   resolved "https://registry.npmjs.org/react-native-screens/-/react-native-screens-3.27.0.tgz"
   integrity sha512-FzSUygZ7yLQyhDJZsl7wU68LwRpVtVdqOPWribmEU3Tf26FohFGGcfJx1D8lf2V2Teb8tI+IaLnXCKbyh2xffA==
@@ -5846,7 +5851,7 @@ react-native-sound@^0.11.2:
   resolved "https://registry.npmjs.org/react-native-sound/-/react-native-sound-0.11.2.tgz"
   integrity sha512-LmGc8lgOK3qecYMVQpyHvww/C+wgT6sWeMpVbOe4NCRGC2yKd4fo4U0KBUo9PO7AqKESO3I/2GZg1/C0+bwiiA==
 
-react-native@*, "react-native@>= 0.60.2", react-native@>=0.57.0, react-native@>=0.8.0, react-native@0.72.6:
+react-native@*, "react-native@>= 0.60.2", react-native@>=0.57, react-native@>=0.57.0, react-native@>=0.8.0, react-native@0.72.6:
   version "0.72.6"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.72.6.tgz"
   integrity sha512-RafPY2gM7mcrFySS8TL8x+TIO3q7oAlHpzEmC7Im6pmXni6n1AuufGaVh0Narbr1daxstw7yW7T9BKW5dpVc2A==
