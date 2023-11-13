@@ -78,7 +78,7 @@ export default function Translation() {
   const getTranslation = async (text: string, filter: string) => {
     const data = {
       sourceSentence: text,
-      place: 'university',
+      place: location,
       listener: filter,
       intimacy: 1,
     };
