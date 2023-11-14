@@ -37,8 +37,9 @@ export default function FilterBtn(props: {getFilter: personFilterType[]}) {
       centerContent={false}
       horizontal={true}>
       <View style={styles.viewContainer}>
-        {filters.map(filter => (
+        {filters.map((filter, key) => (
           <CustomButton
+            key={key}
             selected={filter === selected}
             //   disabled={
             //     filter !== selected &&

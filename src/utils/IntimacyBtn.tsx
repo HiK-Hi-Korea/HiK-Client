@@ -41,8 +41,9 @@ export default function IntimacyBtn() {
       centerContent={false}
       horizontal={true}>
       <View style={styles.viewContainer}>
-        {filters.map(filter => (
+        {filters.map((filter, key) => (
           <CustomButton
+            key={key}
             selected={filter === selected}
             //   disabled={
             //     filter !== selected &&

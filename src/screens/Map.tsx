@@ -102,9 +102,9 @@ export const Map = ({navigation}) => {
         />
         <Button title="No" onPress={() => navigation.navigate('Selection')} />
         <Button
-          title="on-line contents"
+          title="online-transaction"
           onPress={() => {
-            setLocationType('online');
+            setLocationType('online-transaction');
             navigation.navigate('Home', {screen: 'Translation'});
           }}
         />
