@@ -1,5 +1,5 @@
 import React from 'react';
-import {Alert, SafeAreaView, Text} from 'react-native';
+import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import styled from 'styled-components/native';
 import GenerateButton from '../utils/GenerateButton';
 import SuccessButton from '../utils/SuccessButton';
@@ -12,7 +12,10 @@ import Voice from '@react-native-voice/voice';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {CopyBtn} from '../utils/CopyBtn';
 import { useRecoilValue } from 'recoil';
-import { LocationTypeAtom } from '../assets/recoilValues';
+import { IntimacyFilterAtom, LocationTypeAtom, PersonFilterAtom } from '../assets/recoilValues';
+import FilterBtn, { filterType } from '../utils/FilterBtn';
+import IntimacyBtn from '../utils/IntimacyBtn';
+import { OnlineFilter, StoreFilter, UnivFilter } from '../assets/filterValues';
 
 // var Sound = require('react-native-sound');
 // Sound.setCategory('Playback');
@@ -26,14 +29,27 @@ export default function Translation() {
 
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(null);
-  const [items, setItems] = React.useState([
-    {label: 'Student', value: 'student'},
-    {label: 'Professor', value: 'professor'},
-    {label: 'Elder', value: 'elder'},
-    {label: 'Child', value: 'child'},
-    {label: 'Others', value: 'others'},
-  ]);
+  // const [items, setItems] = React.useState([
+  //   {label: 'Student', value: 'student'},
+  //   {label: 'Professor', value: 'professor'},
+  //   {label: 'Elder', value: 'elder'},
+  //   {label: 'Child', value: 'child'},
+  //   {label: 'Others', value: 'others'},
+  // ]);
+  const [items, setItems] = React.useState<filterType[]>();
   const location = useRecoilValue(LocationTypeAtom);
+  const personAtomVal = useRecoilValue(PersonFilterAtom);
+  const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
+
+  React.useEffect(() => {
+    if (location === 'university') {
+      setItems(UnivFilter);
+    } else if (location === 'store') {
+      setItems(StoreFilter);
+    } else {
+      setItems(OnlineFilter);
+    }
+  }, []);
 
   React.useEffect(() => {
     setPressed(false);
@@ -79,8 +95,8 @@ export default function Translation() {
     const data = {
       sourceSentence: text,
       place: location,
-      listener: filter,
-      intimacy: 1,
+      listener: personAtomVal,
+      intimacy: intimacyAtomVal,
     };
     try {
       const response = await fetch('http://13.125.89.24:8080/trans', {
@@ -158,22 +174,11 @@ export default function Translation() {
           <FilterContour>
             <Text style={{color: 'white'}}>Talk with</Text>
           </FilterContour>
-          <DropDownPicker
-            containerStyle={{width: '85%', borderBlockColor: 'transparent'}}
-            maxHeight={100}
-            open={open}
-            value={value}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            scrollViewProps={{
-              nestedScrollEnabled: true,
-            }}
-          />
+          {items && <FilterBtn getFilter={items} />}
           <FilterContour>
             <Text style={{color: 'white'}}>Intimacy</Text>
           </FilterContour>
+          <IntimacyBtn />
           <InputBoxWrapper>
             <InputBox>
               <InputText

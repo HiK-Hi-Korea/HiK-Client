@@ -4,3 +4,13 @@ export const LocationTypeAtom = atom<string>({
   key: 'locationTypeAtom',
   default: 'university',
 });
+
+export const PersonFilterAtom = atom<string>({
+  key: 'personFilterAtom',
+  default: 'someone',
+});
+
+export const IntimacyFilterAtom = atom<string>({
+  key: 'intimacyFilterAtom',
+  default: '1',
+});
