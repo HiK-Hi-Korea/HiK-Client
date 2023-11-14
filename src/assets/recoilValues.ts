@@ -10,7 +10,7 @@ export const PersonFilterAtom = atom<string>({
   default: 'someone',
 });
 
-export const IntimacyFilterAtom = atom<string>({
+export const IntimacyFilterAtom = atom<number>({
   key: 'intimacyFilterAtom',
-  default: '1',
+  default: 1,
 });

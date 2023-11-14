@@ -1,15 +1,23 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import { filterType } from './FilterBtn';
-import { useSetRecoilState } from 'recoil';
-import { IntimacyFilterAtom } from '../assets/recoilValues';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useSetRecoilState} from 'recoil';
+import {IntimacyFilterAtom} from '../assets/recoilValues';
+
+export type intimacyFilterType = {
+  label: number;
+};
 
 export default function IntimacyBtn() {
-  const [text, setText] = React.useState('');
   const [filters, setFilters] = React.useState([
-    {label: '1'},
-    {label: '2'},
-    {label: '3'},
+    {label: 1},
+    {label: 2},
+    {label: 3},
   ]);
   const [selected, setSelected] = React.useState(filters[0]);
 
@@ -51,10 +59,9 @@ export default function IntimacyBtn() {
 }
 
 interface FilterButtonProps {
-  callback: (data: filterType) => void;
+  callback: (data: intimacyFilterType) => void;
   selected: boolean;
-//   disabled: boolean;
-  data: filterType;
+  data: intimacyFilterType;
 }
 
 const CustomButton = (props: FilterButtonProps) => {

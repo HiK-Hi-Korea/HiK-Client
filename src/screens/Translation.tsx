@@ -1,21 +1,24 @@
 import React from 'react';
-import {Alert, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, SafeAreaView, Text} from 'react-native';
 import styled from 'styled-components/native';
 import GenerateButton from '../utils/GenerateButton';
 import SuccessButton from '../utils/SuccessButton';
 // import FilterBtn from '../utils/FilterBtn';
-import DropDownPicker from 'react-native-dropdown-picker';
 import {ActiveVoiceBtn, UnactiveVoiceBtn} from '../utils/VoiceTextBtn';
 import Sound from 'react-native-sound';
 import {PlaySoundBtn} from '../utils/PlaySoundBtn';
 import Voice from '@react-native-voice/voice';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {CopyBtn} from '../utils/CopyBtn';
-import { useRecoilValue } from 'recoil';
-import { IntimacyFilterAtom, LocationTypeAtom, PersonFilterAtom } from '../assets/recoilValues';
-import FilterBtn, { filterType } from '../utils/FilterBtn';
+import {useRecoilValue} from 'recoil';
+import {
+  IntimacyFilterAtom,
+  LocationTypeAtom,
+  PersonFilterAtom,
+} from '../assets/recoilValues';
+import FilterBtn, {personFilterType} from '../utils/FilterBtn';
 import IntimacyBtn from '../utils/IntimacyBtn';
-import { OnlineFilter, StoreFilter, UnivFilter } from '../assets/filterValues';
+import {OnlineFilter, StoreFilter, UnivFilter} from '../assets/filterValues';
 
 // var Sound = require('react-native-sound');
 // Sound.setCategory('Playback');
@@ -27,16 +30,7 @@ export default function Translation() {
   const [voiceBtnPressed, setVoiceBtnPressed] = React.useState(false);
   const [playUrl, setPlayUrl] = React.useState('');
 
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(null);
-  // const [items, setItems] = React.useState([
-  //   {label: 'Student', value: 'student'},
-  //   {label: 'Professor', value: 'professor'},
-  //   {label: 'Elder', value: 'elder'},
-  //   {label: 'Child', value: 'child'},
-  //   {label: 'Others', value: 'others'},
-  // ]);
-  const [items, setItems] = React.useState<filterType[]>();
+  const [items, setItems] = React.useState<personFilterType[]>();
   const location = useRecoilValue(LocationTypeAtom);
   const personAtomVal = useRecoilValue(PersonFilterAtom);
   const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
@@ -91,7 +85,7 @@ export default function Translation() {
     };
   }, []);
 
-  const getTranslation = async (text: string, filter: string) => {
+  const getTranslation = async (text: string) => {
     const data = {
       sourceSentence: text,
       place: location,
@@ -99,6 +93,7 @@ export default function Translation() {
       intimacy: intimacyAtomVal,
     };
     try {
+      console.log(data);
       const response = await fetch('http://13.125.89.24:8080/trans', {
         method: 'POST',
         headers: {
@@ -107,7 +102,6 @@ export default function Translation() {
         },
         body: JSON.stringify(data),
       });
-      // console.log(data);
       const json = await response.json();
       console.log(json.voiceFile);
       setTranslation(json.translatedSentence);
@@ -125,10 +119,8 @@ export default function Translation() {
   const handleButtonClicked = () => {
     if (text === '') {
       Alert.alert('please enter text');
-    } else if (value === null) {
-      Alert.alert('please select filter');
     } else {
-      getTranslation(text, value);
+      getTranslation(text);
     }
   };
 
@@ -138,7 +130,7 @@ export default function Translation() {
   // };
 
   const handleSoundPlayBtn = () => {
-    if (text === '' || value === null) {
+    if (text === '') {
       Alert.alert('Please translate your text first');
     } else {
       Sound.setCategory('Playback');

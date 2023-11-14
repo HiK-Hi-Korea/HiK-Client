@@ -1,14 +1,19 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import { useSetRecoilState } from 'recoil';
-import { PersonFilterAtom } from '../assets/recoilValues';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {useSetRecoilState} from 'recoil';
+import {PersonFilterAtom} from '../assets/recoilValues';
 
-export type filterType = {
+export type personFilterType = {
   label: string;
 };
 
-export default function FilterBtn(props: {getFilter: filterType[]}) {
-  const [text, setText] = React.useState('');
+export default function FilterBtn(props: {getFilter: personFilterType[]}) {
   const [filters, setFilters] = React.useState(props.getFilter);
   const [selected, setSelected] = React.useState(filters[0]);
 
@@ -50,10 +55,10 @@ export default function FilterBtn(props: {getFilter: filterType[]}) {
 }
 
 interface FilterButtonProps {
-  callback: (data: filterType) => void;
+  callback: (data: personFilterType) => void;
   selected: boolean;
 //   disabled: boolean;
-  data: filterType;
+  data: personFilterType;
 }
 
 const CustomButton = (props: FilterButtonProps) => {
