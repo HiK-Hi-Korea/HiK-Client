@@ -22,37 +22,37 @@ export const Map = ({navigation}) => {
   // const [triggerFunc, setTriggerFunc] = React.useState(false);
   const setLocationType = useSetRecoilState(LocationTypeAtom);
 
-  const mApiKey = G_API_KEY;
+  // const mApiKey = G_API_KEY;
 
-  const addTypeList = ['university', 'store'];
+  // const addTypeList = ['university', 'store'];
 
-  const getAddress = () => {
-    fetch(
-      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-        location?.latitude +
-        ',' +
-        location?.longitude +
-        '&key=' +
-        mApiKey +
-        '&language=ko',
-    )
-      .then(response => response.json())
-      .then(responseJson => {
-        // console.log('udonPeople ' + responseJson.results[0].formatted_address);
-        console.log('udonPeople ' + responseJson.results[0].types);
-        const returnLocList = responseJson.result[0].types;
-        for (const element of returnLocList) {
-          if (element in addTypeList) {
-            setLocationType(element);
-            break;
-          }
-          // else {
-          //   setLocationType('none');
-          // }
-        }
-      })
-      .catch(err => console.log('udonPeople error : ' + err));
-  };
+  // const getAddress = () => {
+  //   fetch(
+  //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+  //       location?.latitude +
+  //       ',' +
+  //       location?.longitude +
+  //       '&key=' +
+  //       mApiKey +
+  //       '&language=ko',
+  //   )
+  //     .then(response => response.json())
+  //     .then(responseJson => {
+  //       // console.log('udonPeople ' + responseJson.results[0].formatted_address);
+  //       console.log('udonPeople ' + responseJson.results[0].types);
+  //       const returnLocList = responseJson.result[0].types;
+  //       for (const element of returnLocList) {
+  //         if (element in addTypeList) {
+  //           setLocationType(element);
+  //           break;
+  //         }
+  //         // else {
+  //         //   setLocationType('none');
+  //         // }
+  //       }
+  //     })
+  //     .catch(err => console.log('udonPeople error : ' + err));
+  // };
 
   React.useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -91,13 +91,20 @@ export const Map = ({navigation}) => {
         />
       )}
       <LocationInfoTab>
-        <AskText>Are you here now?</AskText>
-        <Button
+        <AskText>Are you here now? : University</AskText>
+        {/* <Button
           title="Yes"
           onPress={() => {
             getAddress();
             // navigation.navigate('Home', {screen: 'Translation'});
             navigation.navigate('Selection');
+          }}
+        /> */}
+        <Button
+          title="Yes"
+          onPress={() => {
+            setLocationType('university');
+            navigation.navigate('Home', {screen: 'Translation'});
           }}
         />
         <Button title="No" onPress={() => navigation.navigate('Selection')} />

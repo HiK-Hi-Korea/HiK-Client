@@ -3,7 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import DrawerNavigator from './src/utils/DrawerNavigator';
 import {Map} from './src/screens/Map';
 import {createStackNavigator} from '@react-navigation/stack';
-import { RecoilRoot } from 'recoil';
+import {RecoilRoot} from 'recoil';
 import LocationSelection from './src/screens/LocationSelection';
 
 const Stack = createStackNavigator();

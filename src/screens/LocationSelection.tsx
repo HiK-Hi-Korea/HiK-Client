@@ -1,6 +1,6 @@
 import {Picker} from '@react-native-picker/picker';
 import React from 'react';
-import {Button, SafeAreaView, Text} from 'react-native';
+import {Button, SafeAreaView} from 'react-native';
 import {useRecoilState} from 'recoil';
 import {LocationTypeAtom} from '../assets/recoilValues';
 import styled from 'styled-components/native';

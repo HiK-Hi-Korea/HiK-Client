@@ -1,10 +1,10 @@
 import React from 'react';
 import Translation from '../screens/Translation';
-import StudyLog from '../screens/StudyLog';
 import {DrawerItemList, createDrawerNavigator} from '@react-navigation/drawer';
 import {Image, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
+import StudyStackNavigator from './StudyStackNavigator';
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = props => {
@@ -49,7 +49,7 @@ function DrawerNavigator() {
         headerTitle: () => HeaderImg(),
       }}>
       <Drawer.Screen name="Translation" component={Translation} />
-      <Drawer.Screen name="StudyLog" component={StudyLog} />
+      <Drawer.Screen name="StudyLog" component={StudyStackNavigator} />
     </Drawer.Navigator>
   );
 }
