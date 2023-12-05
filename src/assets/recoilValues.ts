@@ -34,3 +34,8 @@ export const UserEmailAtom = atom<string>({
   key: 'useremail',
   default: 'HiK@gmail.com',
 });
+
+export const UserAgeAtom = atom<number>({
+  key: 'userage',
+  default: 20,
+});
