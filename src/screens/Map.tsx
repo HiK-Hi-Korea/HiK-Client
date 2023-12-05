@@ -7,8 +7,9 @@ import {G_API_KEY} from '@env';
 
 //google map
 import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
-import {useSetRecoilState} from 'recoil';
+import {useRecoilState} from 'recoil';
 import {LocationTypeAtom} from '../assets/recoilValues';
+import {useFocusEffect} from '@react-navigation/native';
 
 Geolocation.requestAuthorization('whenInUse');
 
@@ -20,39 +21,39 @@ interface IType {
 export const Map = ({navigation}) => {
   const [location, setLocation] = React.useState<IType | undefined>(undefined);
   // const [triggerFunc, setTriggerFunc] = React.useState(false);
-  const setLocationType = useSetRecoilState(LocationTypeAtom);
+  // const setLocationType = useSetRecoilState(LocationTypeAtom);
+  const [locationType, setLocationType] = useRecoilState(LocationTypeAtom);
 
-  // const mApiKey = G_API_KEY;
+  const mApiKey = G_API_KEY;
 
-  // const addTypeList = ['university', 'store'];
+  const addTypeList = ['university', 'store'];
 
-  // const getAddress = () => {
-  //   fetch(
-  //     'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
-  //       location?.latitude +
-  //       ',' +
-  //       location?.longitude +
-  //       '&key=' +
-  //       mApiKey +
-  //       '&language=ko',
-  //   )
-  //     .then(response => response.json())
-  //     .then(responseJson => {
-  //       // console.log('udonPeople ' + responseJson.results[0].formatted_address);
-  //       console.log('udonPeople ' + responseJson.results[0].types);
-  //       const returnLocList = responseJson.result[0].types;
-  //       for (const element of returnLocList) {
-  //         if (element in addTypeList) {
-  //           setLocationType(element);
-  //           break;
-  //         }
-  //         // else {
-  //         //   setLocationType('none');
-  //         // }
-  //       }
-  //     })
-  //     .catch(err => console.log('udonPeople error : ' + err));
-  // };
+  const getAddress = () => {
+    fetch(
+      'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
+        location?.latitude +
+        ',' +
+        location?.longitude +
+        '&key=' +
+        mApiKey +
+        '&language=ko',
+    )
+      .then(response => response.json())
+      .then(responseJson => {
+        // console.log('udonPeople ' + responseJson.results[0].formatted_address);
+        console.log('udonPeople ' + responseJson.results[0].types);
+        const returnLocList = responseJson.results[0].types;
+        for (const element of returnLocList) {
+          for (const typeElement of addTypeList) {
+            if (typeElement === element) {
+              setLocationType(element);
+              break;
+            }
+          }
+        }
+      })
+      .catch(err => console.log('udonPeople error : ' + err));
+  };
 
   React.useEffect(() => {
     Geolocation.getCurrentPosition(
@@ -63,10 +64,22 @@ export const Map = ({navigation}) => {
       error => {
         console.log(error.code, error.message);
       },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      // {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
     // getAddress();
   }, []);
+
+  // React.useEffect(() => {
+  //   console.log(location);
+  //   getAddress();
+  // }, [location]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(location);
+      getAddress();
+    }, [location]),
+  );
 
   // const toYesFunc = () => {
   //   setTriggerFunc(true);
@@ -91,7 +104,7 @@ export const Map = ({navigation}) => {
         />
       )}
       <LocationInfoTab>
-        <AskText>Are you here now? : University</AskText>
+        <AskText>{`Are you here now? : ${locationType}`}</AskText>
         {/* <Button
           title="Yes"
           onPress={() => {
@@ -103,7 +116,6 @@ export const Map = ({navigation}) => {
         <Button
           title="Yes"
           onPress={() => {
-            setLocationType('university');
             navigation.navigate('Home', {screen: 'Translation'});
           }}
         />

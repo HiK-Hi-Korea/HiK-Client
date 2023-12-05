@@ -1,65 +1,100 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import {SafeAreaView, ScrollView, Text} from 'react-native';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components/native';
+import { UserIdAtom } from '../assets/recoilValues';
 
-const TestData = [
-  {
-    rawSentence: 'Hi Professor I have a question',
-    transSentence: '교수님 질문이 있어요',
-  },
-  {
-    rawSentence: 'HiK',
-    transSentence: '안녕 한국!',
-  },
-  {
-    rawSentence: 'HiK',
-    transSentence: '안녕 한국!',
-  },
-  {
-    date: 'NOV 15th, 2023',
-    rawSentence: 'HiK',
-    transSentence: '안녕 한국!',
-  },
-];
+type TransReturnVals = {
+  id: number;
+  srcSentence: string;
+  place: string;
+  listener: string;
+  intimacy: number;
+  translatedSentence: string;
+  voiceFile: string;
+  timestamp: string;
+};
 
-export default function StudyLogInner({navigation}) {
-  const date = 'NOV 15th, 2023';
-  const filter = ['university', 'professor', 'intimacy 1'];
+export default function StudyLogInner({navigation: {navigate}, route}) {
+  const userIdAtomVal = useRecoilValue(UserIdAtom);
+  const [datas, setDatas] = useState<TransReturnVals[] | undefined>(undefined);
+  const getStudyLogInnerContents = async (id: number) => {
+    try {
+      const response = await fetch(
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getSentences',
+        {
+          method: 'GET',
+          headers: {
+            'X-UserId': userIdAtomVal,
+            'X-ContentId': `${id}`,
+          },
+        },
+      );
+      const json = await response.json();
+      setDatas(json);
+      console.log(json.voiceFile);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    route.params.setIsShown(false);
+    getStudyLogInnerContents(route.params.id);
+  }, []);
+
   return (
     <SafeAreaView>
       <ScrollView>
-        <Wrapper>
-          <Text style={styles.textStyle}>{date}</Text>
-          <FilterWrapper>
-            {filter.map(filterOne => {
+        {datas && (
+          <Wrapper>
+            <Text style={styles.textStyle}>
+              {datas[0].timestamp.split('T')[0]}
+            </Text>
+            <FilterWrapper>
+              <FilterBox>
+                <Text style={styles.filterStyle}>{datas[0].place}</Text>
+              </FilterBox>
+              <FilterBox>
+                <Text style={styles.filterStyle}>{datas[0].listener}</Text>
+              </FilterBox>
+              <FilterBox>
+                <Text style={styles.filterStyle}>{datas[0].intimacy}</Text>
+              </FilterBox>
+            </FilterWrapper>
+            {datas.map((data, idx) => {
               return (
-                <FilterBox>
-                  <Text style={styles.filterStyle}>{filterOne}</Text>
-                </FilterBox>
+                <TouchableOpacity
+                  key={idx}
+                  style={styles.touchableStyle}
+                  onPress={() =>
+                    navigate('Others', {
+                      input_sentence: data.srcSentence,
+                      prev_translated: data.translatedSentence,
+                      prev_place: data.place,
+                      prev_listener: data.listener,
+                      prev_intimacy: data.intimacy,
+                    })
+                  }>
+                  <OpacityWrapper>
+                    <TextBox>
+                      <Text style={styles.titleStyle}>{data.srcSentence}</Text>
+                      <Text style={styles.textStyle}>Translated into...</Text>
+                      <Text style={styles.titleStyle}>
+                        {data.translatedSentence}
+                      </Text>
+                    </TextBox>
+                    <Image
+                      style={styles.chevronStyle}
+                      source={require('../assets/icons/ChevronRight.png')}
+                    />
+                  </OpacityWrapper>
+                </TouchableOpacity>
               );
             })}
-          </FilterWrapper>
-          {TestData.map(data => {
-            return (
-              <TouchableOpacity
-                style={styles.touchableStyle}
-                onPress={() => navigation.navigate('remake')}>
-                <OpacityWrapper>
-                  <TextBox>
-                    <Text style={styles.titleStyle}>{data.rawSentence}</Text>
-                    <Text style={styles.textStyle}>Translated into...</Text>
-                    <Text style={styles.titleStyle}>{data.transSentence}</Text>
-                  </TextBox>
-                  <Image
-                    style={styles.chevronStyle}
-                    source={require('../assets/icons/ChevronRight.png')}
-                  />
-                </OpacityWrapper>
-              </TouchableOpacity>
-            );
-          })}
-        </Wrapper>
+          </Wrapper>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

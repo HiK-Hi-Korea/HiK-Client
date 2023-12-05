@@ -5,9 +5,16 @@ import {Image, Text} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import StudyStackNavigator from './StudyStackNavigator';
+import {useRecoilValue} from 'recoil';
+import {IsUserAtom, UserEmailAtom, UserNameAtom} from '../assets/recoilValues';
+import Login from '../screens/Login';
+import Mypage from '../screens/Mypage';
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = props => {
+  const isUser = useRecoilValue(IsUserAtom);
+  const userName = useRecoilValue(UserNameAtom);
+  const userEmail = useRecoilValue(UserEmailAtom);
   return (
     <SafeAreaView style={{flex: 1}}>
       {/*Top Large Image */}
@@ -16,9 +23,19 @@ const CustomDrawerContent = props => {
           style={{height: 45, width: 41}}
           source={require('../assets/img/DrawerLogo.png')}
         />
-        <Text style={{marginTop: 25}}>Welcome!</Text>
-        <NameText>HiK</NameText>
-        <Text>hik@gmail.com</Text>
+        {isUser ? (
+          <>
+            <Text style={{marginTop: 25}}>Welcome!</Text>
+            <NameText>{userName}</NameText>
+            <Text>{userEmail}</Text>
+          </>
+        ) : (
+          <>
+            <Text style={{marginTop: 25}}>You are in</Text>
+            <NameText>GuestMode</NameText>
+            <Text>please Login First!</Text>
+          </>
+        )}
       </SideBarHeader>
       <DrawerItemList {...props} />
     </SafeAreaView>
@@ -34,7 +51,9 @@ function HeaderImg() {
   );
 }
 
-function DrawerNavigator() {
+function DrawerNavigator({navigation: {navigate}}) {
+  const [isShown, setIsShown] = React.useState(true);
+  const isUser = useRecoilValue(IsUserAtom);
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
@@ -49,7 +68,17 @@ function DrawerNavigator() {
         headerTitle: () => HeaderImg(),
       }}>
       <Drawer.Screen name="Translation" component={Translation} />
-      <Drawer.Screen name="StudyLog" component={StudyStackNavigator} />
+      <Drawer.Screen
+        name="StudyLog"
+        component={StudyStackNavigator}
+        initialParams={{setIsShown: setIsShown}}
+        options={{headerShown: isShown}}
+      />
+      {isUser ? (
+        <Drawer.Screen name="mypage" component={Mypage} />
+      ) : (
+        <Drawer.Screen name="login" component={Login} />
+      )}
     </Drawer.Navigator>
   );
 }

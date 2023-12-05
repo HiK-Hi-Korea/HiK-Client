@@ -1,5 +1,12 @@
 import React from 'react';
-import {Alert, SafeAreaView, Text} from 'react-native';
+import {
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import styled from 'styled-components/native';
 import GenerateButton from '../utils/GenerateButton';
 import SuccessButton from '../utils/SuccessButton';
@@ -10,21 +17,28 @@ import {PlaySoundBtn} from '../utils/PlaySoundBtn';
 import Voice from '@react-native-voice/voice';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {CopyBtn} from '../utils/CopyBtn';
-import {useRecoilValue} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 import {
   IntimacyFilterAtom,
   LocationTypeAtom,
   PersonFilterAtom,
+  UserIdAtom,
 } from '../assets/recoilValues';
 import FilterBtn, {personFilterType} from '../utils/FilterBtn';
 import IntimacyBtn from '../utils/IntimacyBtn';
 import {OnlineFilter, StoreFilter, UnivFilter} from '../assets/filterValues';
+import {useFocusEffect} from '@react-navigation/native';
+import App from '../../App';
 
 // var Sound = require('react-native-sound');
 // Sound.setCategory('Playback');
 
-export default function Translation() {
+export default function Translation({navigation: {navigate}}) {
   const [text, onChangeText] = React.useState('');
+  const [filterChanged, setFilterChanged] = React.useState(false);
+  const [selectedFilter, setSelectedFilter] = React.useState<
+    string | undefined
+  >();
   const [pressed, setPressed] = React.useState(false);
   const [translation, setTranslation] = React.useState('');
   const [voiceBtnPressed, setVoiceBtnPressed] = React.useState(false);
@@ -32,21 +46,56 @@ export default function Translation() {
 
   const [items, setItems] = React.useState<personFilterType[]>();
   const location = useRecoilValue(LocationTypeAtom);
-  const personAtomVal = useRecoilValue(PersonFilterAtom);
+  const [person, setPerson] = useRecoilState(PersonFilterAtom);
   const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
+  const userIdAtomVal = useRecoilValue(UserIdAtom);
+
+  // React.useEffect(() => {
+  //   if (location === 'university') {
+  //     setItems(UnivFilter);
+  //   } else if (location === 'store') {
+  //     setItems(StoreFilter);
+  //   } else {
+  //     setItems(OnlineFilter);
+  //   }
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (location === 'university') {
+        setItems(UnivFilter);
+      } else if (location === 'store') {
+        setItems(StoreFilter);
+      } else {
+        setItems(OnlineFilter);
+      }
+    }, []),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (selectedFilter !== undefined && selectedFilter !== '') {
+        setPerson(selectedFilter);
+      }
+      console.log(selectedFilter);
+      if (pressed) {
+        setPressed(false);
+      }
+    }, [selectedFilter]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (pressed) {
+        setPressed(false);
+      }
+    }, [filterChanged]),
+  );
 
   React.useEffect(() => {
-    if (location === 'university') {
-      setItems(UnivFilter);
-    } else if (location === 'store') {
-      setItems(StoreFilter);
-    } else {
-      setItems(OnlineFilter);
+    if (pressed) {
+      setPressed(false);
     }
-  }, []);
-
-  React.useEffect(() => {
-    setPressed(false);
   }, [text]);
 
   const _onSpeechStart = () => {
@@ -89,19 +138,23 @@ export default function Translation() {
     const data = {
       sourceSentence: text,
       place: location,
-      listener: personAtomVal,
+      listener: person,
       intimacy: intimacyAtomVal,
     };
     try {
       console.log(data);
-      const response = await fetch('http://13.125.89.24:8080/trans', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/trans',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-UserId': userIdAtomVal,
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
       const json = await response.json();
       console.log(json.voiceFile);
       setTranslation(json.translatedSentence);
@@ -161,16 +214,42 @@ export default function Translation() {
       <ViewContent>
         <Container>
           <LocationBox>
-            <LocationText>Your Location Is... {location}</LocationText>
+            <Text style={styles.titleStyle}>Your Location Is...</Text>
+            <TouchableOpacity onPress={() => navigate('Map')}>
+              <Text style={styles.towardMapStyle}>{location}</Text>
+            </TouchableOpacity>
           </LocationBox>
           <FilterContour>
-            <Text style={{color: 'white'}}>Talk with</Text>
+            <Text style={styles.contourStyle}>Talk with</Text>
           </FilterContour>
-          {items && <FilterBtn getFilter={items} />}
+          <FilterWrapper>
+            <Text style={styles.filterInputInfoStyle}>Your Filter : </Text>
+            <FilterInput>
+              <TextInput
+                style={styles.filterInputStyle}
+                editable
+                onChangeText={(val: string) => setSelectedFilter(val)}
+                value={selectedFilter}
+                placeholder="input text or select"
+              />
+            </FilterInput>
+          </FilterWrapper>
+          <FilterWrapper>
+            {items && (
+              <FilterBtn
+                getFilter={items}
+                selectedFilter={selectedFilter}
+                setSelectedFilter={setSelectedFilter}
+                setFilterChanged={setFilterChanged}
+              />
+            )}
+          </FilterWrapper>
           <FilterContour>
-            <Text style={{color: 'white'}}>Intimacy</Text>
+            <Text style={styles.contourStyle}>Intimacy</Text>
           </FilterContour>
-          <IntimacyBtn />
+          <FilterWrapper>
+            <IntimacyBtn setFilterChanged={setFilterChanged} />
+          </FilterWrapper>
           <InputBoxWrapper>
             <InputBox>
               <InputText
@@ -229,6 +308,8 @@ export default function Translation() {
 const ViewContent = styled.View`
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
 `;
@@ -237,33 +318,55 @@ const Container = styled.ScrollView.attrs(() => ({
   contentContainerStyle: {
     alignItems: 'center',
   },
-}))``;
+}))`
+  width: 90%;
+`;
 
 const LocationBox = styled.View`
   display: flex;
   flex-direction: row;
-  width: 85%;
+  width: 98%;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
   margin-top: 20px;
-`;
-
-const LocationText = styled.Text`
-  font-size: 20px;
-  font-weight: bold;
+  margin-bottom: 10px;
 `;
 
 const FilterContour = styled.View`
   display: flex;
   justify-content: center;
-  width: 85%;
+  width: 100%;
   height: 30px;
   background-color: rgba(21, 86, 254, 1);
   border-radius: 20px;
   padding: 5px 0px 5px 10px;
   margin-top: 10px;
   margin-bottom: 5px;
+`;
+
+const FilterInput = styled.View`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 70%;
+  height: 30px;
+  border: 1px solid rgba(21, 86, 254, 1);
+  /* background-color: rgba(21, 86, 254, 1); */
+  border-radius: 20px;
+  padding: 0px 0px 0px 10px;
+  margin-top: 5px;
+  gap: 5px;
+  /* margin-bottom: 5px; */
+`;
+
+const FilterWrapper = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 98%;
+  align-items: center;
+  justify-content: flex-start;
 `;
 
 const InputBoxWrapper = styled.View`
@@ -276,7 +379,7 @@ const InputBoxWrapper = styled.View`
 const InputBox = styled.View`
   display: flex;
   flex-direction: column;
-  width: 85%;
+  width: 100%;
   height: 160px;
   border-radius: 8px;
   /* border: 1px solid black; */
@@ -305,7 +408,7 @@ const InputText = styled.TextInput`
 const ResultBox = styled.View`
   display: flex;
   flex-direction: column;
-  width: 85%;
+  width: 100%;
   height: 160px;
   border-radius: 8px;
   /* border: 1px solid black; */
@@ -319,3 +422,51 @@ const GeneratedText = styled.Text`
   display: flex;
   height: 80%;
 `;
+
+const styles = StyleSheet.create({
+  textStyle: {
+    width: 330,
+    alignContent: 'flex-start',
+    fontSize: 15,
+    color: '#565656',
+  },
+  titleStyle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  filterInputStyle: {
+    fontSize: 18,
+    color: '#1556FE',
+    fontWeight: 'bold',
+  },
+  filterInputInfoStyle: {
+    fontSize: 18,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  towardMapStyle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1556FE',
+    textDecorationLine: 'underline',
+    textDecorationColor: '#1556FE',
+  },
+  contourStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  filterTitleStyle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FE3A5D',
+  },
+  filterStyle: {
+    color: 'black',
+    fontSize: 15,
+  },
+  labelStyle: {
+    fontSize: 15,
+    color: '#565656',
+  },
+});

@@ -2,7 +2,7 @@ import {atom} from 'recoil';
 
 export const LocationTypeAtom = atom<string>({
   key: 'locationTypeAtom',
-  default: 'store',
+  default: 'not found',
 });
 
 export const PersonFilterAtom = atom<string>({
@@ -13,4 +13,24 @@ export const PersonFilterAtom = atom<string>({
 export const IntimacyFilterAtom = atom<number>({
   key: 'intimacyFilterAtom',
   default: 1,
+});
+
+export const UserIdAtom = atom<string>({
+  key: 'userId',
+  default: '110717890204104809197',
+});
+
+export const IsUserAtom = atom<boolean>({
+  key: 'isUser',
+  default: false,
+});
+
+export const UserNameAtom = atom<string>({
+  key: 'username',
+  default: '',
+});
+
+export const UserEmailAtom = atom<string>({
+  key: 'useremail',
+  default: '',
 });

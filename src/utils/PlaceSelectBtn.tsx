@@ -1,52 +1,34 @@
 import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {useSetRecoilState} from 'recoil';
-import {IntimacyFilterAtom} from '../assets/recoilValues';
-import { useFocusEffect } from '@react-navigation/native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
+import { useSetRecoilState } from 'recoil';
+import { LocationTypeAtom } from '../assets/recoilValues';
 
-export type intimacyFilterType = {
-  label: number;
+type locationType = {
+  label: string;
 };
 
-export default function IntimacyBtn(props: {
-  setFilterChanged?: React.Dispatch<React.SetStateAction<boolean>>;
+export default function PlaceSelectBtn(props: {
+  setLocation: React.Dispatch<React.SetStateAction<string>>;
 }) {
   const [filters, setFilters] = React.useState([
-    {label: 1},
-    {label: 2},
-    {label: 3},
+    {label: 'university'},
+    {label: 'store'},
+    {label: 'online-transaction'},
   ]);
   const [selected, setSelected] = React.useState(filters[0]);
-
-  const setIntimacyFilter = useSetRecoilState(IntimacyFilterAtom);
-
-  // React.useEffect(() => {
-  //   setIntimacyFilter(selected.label);
-  //   if (props.setFilterChanged) {
-  //     props.setFilterChanged(true);
-  //   }
-  // }, [selected]);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      setIntimacyFilter(selected.label);
-      if (props.setFilterChanged) {
-        props.setFilterChanged(true);
-      }
-    }, [selected]),
-  );
+  const setLocationFilter = useSetRecoilState(LocationTypeAtom);
+  React.useEffect(() => {
+    setLocationFilter(selected.label);
+  }, [selected]);
 
   const callback = data => {
     if (selected === data) {
       return setSelected(filters[0]);
     }
     setSelected(data);
+    props.setLocation(data.label);
+    console.log(data.label);
   };
 
   return (
@@ -75,9 +57,9 @@ export default function IntimacyBtn(props: {
 }
 
 interface FilterButtonProps {
-  callback: (data: intimacyFilterType) => void;
+  callback: (data: locationType) => void;
   selected: boolean;
-  data: intimacyFilterType;
+  data: locationType;
 }
 
 const CustomButton = (props: FilterButtonProps) => {

@@ -8,24 +8,67 @@ import {
 } from 'react-native';
 import {useSetRecoilState} from 'recoil';
 import {PersonFilterAtom} from '../assets/recoilValues';
+import {useFocusEffect} from '@react-navigation/native';
 
 export type personFilterType = {
   label: string;
 };
 
-export default function FilterBtn(props: {getFilter: personFilterType[]}) {
+export default function FilterBtn(props: {
+  getFilter: personFilterType[];
+  selectedFilter?: string | undefined;
+  setSelectedFilter?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setFilterChanged?: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
   const [filters, setFilters] = React.useState(props.getFilter);
-  const [selected, setSelected] = React.useState(filters[0]);
+  const [selected, setSelected] = React.useState<personFilterType | undefined>(
+    undefined,
+  );
 
-  const setPersonFilter = useSetRecoilState(PersonFilterAtom);
+  // const setPersonFilter = useSetRecoilState(PersonFilterAtom);
 
   React.useEffect(() => {
-    setPersonFilter(selected.label);
+    if (selected !== undefined) {
+      if (props.setSelectedFilter) {
+        props.setSelectedFilter(selected?.label);
+      }
+    }
+    if (props.setFilterChanged) {
+      props.setFilterChanged(true);
+    }
   }, [selected]);
+
+  //입력시 선택되었던 항목 비활성화
+  useFocusEffect(
+    React.useCallback(() => {
+      if (props.selectedFilter) {
+        if (props.selectedFilter.length === 0) {
+          setSelected(undefined);
+        } else {
+          for (let i = 0; i < filters.length; i++) {
+            if (props.selectedFilter === filters[i].label) {
+              setSelected(filters[i]);
+              break;
+            } else {
+              setSelected(undefined);
+            }
+          }
+        }
+      } else {
+        setSelected(undefined);
+      }
+    }, [props.selectedFilter]),
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setFilters(props.getFilter);
+    }, [props.getFilter]),
+  );
 
   const callback = data => {
     if (selected === data) {
-      return setSelected(filters[0]);
+      return setSelected(undefined);
     }
     setSelected(data);
   };
@@ -58,7 +101,6 @@ export default function FilterBtn(props: {getFilter: personFilterType[]}) {
 interface FilterButtonProps {
   callback: (data: personFilterType) => void;
   selected: boolean;
-//   disabled: boolean;
   data: personFilterType;
 }
 

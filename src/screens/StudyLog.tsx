@@ -1,62 +1,90 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView, ScrollView, StyleSheet, Text} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useRecoilValue} from 'recoil';
 import styled from 'styled-components/native';
+import {UserIdAtom} from '../assets/recoilValues';
+import {useFocusEffect} from '@react-navigation/native';
 
-const TestData = [
-  {
-    date: 'NOV 15th, 2023',
-    title: 'Hi Professor I have a question',
-    filter: ['university', 'professor', 'intimacy 1'],
-  },
-  {
-    date: 'NOV 15th, 2023',
-    title: 'How much is it?',
-    filter: ['store', 'staff', 'intimacy 1'],
-  },
-  {
-    date: 'NOV 16th, 2023',
-    title: 'I want to meet you',
-    filter: ['online-transaction', 'buyer', 'intimacy 1'],
-  },
-  {
-    date: 'NOV 17th, 2023',
-    title: 'Hi Korea',
-    filter: ['university', 'friend', 'intimacy 3'],
-  },
-  {
-    date: 'NOV 17th, 2023',
-    title: 'where is the bus stop',
-    filter: ['university', 'elder', 'intimacy 1'],
-  },
-];
+type StudyLogReturnVals = {
+  id: number;
+  place: string;
+  listener: string;
+  intimacy: number;
+  timestamp: string;
+  mainSentence: string;
+};
 
-function StudyLog({navigation}) {
+function StudyLog({navigation: {navigate}, route}) {
+  const userIdAtomVal = useRecoilValue(UserIdAtom);
+  const [datas, setDatas] = useState<StudyLogReturnVals[] | undefined>(
+    undefined,
+  );
+
+  const getStudyLogLists = async () => {
+    try {
+      const response = await fetch('http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/user/showListDto', {
+        method: 'GET',
+        headers: {
+          'X-UserId': userIdAtomVal,
+        },
+      });
+      const json = await response.json();
+      setDatas(json);
+      console.log(json.voiceFile);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // React.useEffect(() => {
+  //   route.params.setIsShown(true);
+  //   getStudyLogLists();
+  // }, [useIsFocused]);
+  useFocusEffect(
+    React.useCallback(() => {
+      route.params.setIsShown(true);
+      getStudyLogLists();
+    }, []),
+  );
+
   return (
     <SafeAreaView>
       <ScrollView>
         <Wrapper>
-          {TestData.map((element, idx) => {
-            return (
-              <TouchableOpacity
-                style={styles.touchableStyle}
-                onPress={() => navigation.navigate('log')}>
-                <TextBox key={idx}>
-                  <Text style={styles.textStyle}>{element.date}</Text>
-                  <Text style={styles.titleStyle}>{element.title}</Text>
-                  <FilterWrapper>
-                    {element.filter.map(filterOne => {
-                      return (
-                        <FilterBox>
-                          <Text style={styles.filterStyle}>{filterOne}</Text>
-                        </FilterBox>
-                      );
-                    })}
-                  </FilterWrapper>
-                </TextBox>
-              </TouchableOpacity>
-            );
-          })}
+          {datas &&
+            datas.map((element, idx) => {
+              return (
+                <TouchableOpacity
+                  key={idx}
+                  style={styles.touchableStyle}
+                  onPress={() => navigate('Conversation', {id: element.id})}>
+                  <TextBox key={idx}>
+                    <Text style={styles.textStyle}>
+                      {element.timestamp.split('T')[0]}
+                    </Text>
+                    <Text style={styles.titleStyle}>
+                      {element.mainSentence}
+                    </Text>
+                    <FilterWrapper>
+                      <FilterBox>
+                        <Text style={styles.filterStyle}>{element.place}</Text>
+                      </FilterBox>
+                      <FilterBox>
+                        <Text style={styles.filterStyle}>
+                          {element.listener}
+                        </Text>
+                      </FilterBox>
+                      <FilterBox>
+                        <Text style={styles.filterStyle}>
+                          {element.intimacy}
+                        </Text>
+                      </FilterBox>
+                    </FilterWrapper>
+                  </TextBox>
+                </TouchableOpacity>
+              );
+            })}
         </Wrapper>
       </ScrollView>
     </SafeAreaView>

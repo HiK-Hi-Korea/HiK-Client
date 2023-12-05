@@ -5,15 +5,30 @@ import StudyLog from '../screens/StudyLog';
 import StudyLogInner from '../screens/StudyLogInner';
 import StudyOtherFilter from '../screens/StudyOtherFilter';
 
-export default function StudyStackNavigator() {
+export default function StudyStackNavigator({navigation: {navigate}, route}) {
   const Stack = createStackNavigator();
   return (
     // <NavigationContainer>
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="main" component={StudyLog} />
-      <Stack.Screen name="log" component={StudyLogInner} />
-      <Stack.Screen name="remake" component={StudyOtherFilter} />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Study Log"
+        component={StudyLog}
+        options={{headerShown: false}}
+        initialParams={{setIsShown: route.params.setIsShown}}
+      />
+      <Stack.Screen
+        name="Conversation"
+        component={StudyLogInner}
+        options={{headerShown: true}}
+        initialParams={{setIsShown: route.params.setIsShown}}
+      />
+      <Stack.Screen
+        name="Others"
+        component={StudyOtherFilter}
+        options={{headerShown: true}}
+      />
     </Stack.Navigator>
     // </NavigationContainer>
   );
-}
+};
+
