@@ -28,7 +28,6 @@ import FilterBtn, {personFilterType} from '../utils/FilterBtn';
 import IntimacyBtn from '../utils/IntimacyBtn';
 import {OnlineFilter, StoreFilter, UnivFilter} from '../assets/filterValues';
 import {useFocusEffect} from '@react-navigation/native';
-import App from '../../App';
 
 // var Sound = require('react-native-sound');
 // Sound.setCategory('Playback');
@@ -49,16 +48,6 @@ export default function Translation({navigation: {navigate}}) {
   const [person, setPerson] = useRecoilState(PersonFilterAtom);
   const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
   const userIdAtomVal = useRecoilValue(UserIdAtom);
-
-  // React.useEffect(() => {
-  //   if (location === 'university') {
-  //     setItems(UnivFilter);
-  //   } else if (location === 'store') {
-  //     setItems(StoreFilter);
-  //   } else {
-  //     setItems(OnlineFilter);
-  //   }
-  // }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -84,13 +73,14 @@ export default function Translation({navigation: {navigate}}) {
     }, [selectedFilter]),
   );
 
-  useFocusEffect(
-    React.useCallback(() => {
-      if (pressed) {
-        setPressed(false);
-      }
-    }, [filterChanged]),
-  );
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     console.log('if filter changed? text changed? filter useEffect');
+  //     if (pressed) {
+  //       setPressed(false);
+  //     }
+  //   }, [filterChanged, text]),
+  // );
 
   React.useEffect(() => {
     if (pressed) {
@@ -248,7 +238,10 @@ export default function Translation({navigation: {navigate}}) {
             <Text style={styles.contourStyle}>Intimacy</Text>
           </FilterContour>
           <FilterWrapper>
-            <IntimacyBtn setFilterChanged={setFilterChanged} />
+            <IntimacyBtn
+              setPressed={setPressed}
+              setFilterChanged={setFilterChanged}
+            />
           </FilterWrapper>
           <InputBoxWrapper>
             <InputBox>

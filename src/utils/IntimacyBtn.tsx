@@ -15,6 +15,7 @@ export type intimacyFilterType = {
 };
 
 export default function IntimacyBtn(props: {
+  setPressed: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterChanged?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [filters, setFilters] = React.useState([
@@ -35,10 +36,13 @@ export default function IntimacyBtn(props: {
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log('내부 intimacy filter useEffect');
       setIntimacyFilter(selected.label);
       if (props.setFilterChanged) {
-        props.setFilterChanged(true);
+        console.log('get filter changed');
+        props.setFilterChanged(() => true);
       }
+      props.setPressed(false);
     }, [selected]),
   );
 
