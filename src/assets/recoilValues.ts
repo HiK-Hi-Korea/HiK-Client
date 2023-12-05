@@ -22,15 +22,15 @@ export const UserIdAtom = atom<string>({
 
 export const IsUserAtom = atom<boolean>({
   key: 'isUser',
-  default: false,
+  default: true,
 });
 
 export const UserNameAtom = atom<string>({
   key: 'username',
-  default: '',
+  default: 'HiK',
 });
 
 export const UserEmailAtom = atom<string>({
   key: 'useremail',
-  default: '',
+  default: 'HiK@gmail.com',
 });

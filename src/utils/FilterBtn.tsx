@@ -25,16 +25,15 @@ export default function FilterBtn(props: {
     undefined,
   );
 
-  // const setPersonFilter = useSetRecoilState(PersonFilterAtom);
+  const setPersonFilter = useSetRecoilState(PersonFilterAtom);
 
   React.useEffect(() => {
     if (selected !== undefined) {
       if (props.setSelectedFilter) {
         props.setSelectedFilter(selected?.label);
+      } else {
+        setPersonFilter(selected.label);
       }
-    }
-    if (props.setFilterChanged) {
-      props.setFilterChanged(true);
     }
   }, [selected]);
 

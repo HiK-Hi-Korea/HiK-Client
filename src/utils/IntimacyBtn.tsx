@@ -15,7 +15,7 @@ export type intimacyFilterType = {
 };
 
 export default function IntimacyBtn(props: {
-  setPressed: React.Dispatch<React.SetStateAction<boolean>>;
+  setPressed?: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterChanged?: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [filters, setFilters] = React.useState([
@@ -42,7 +42,9 @@ export default function IntimacyBtn(props: {
         console.log('get filter changed');
         props.setFilterChanged(() => true);
       }
-      props.setPressed(false);
+      if (props.setPressed) {
+        props.setPressed(false);
+      }
     }, [selected]),
   );
 

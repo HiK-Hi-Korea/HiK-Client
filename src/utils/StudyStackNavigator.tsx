@@ -30,5 +30,4 @@ export default function StudyStackNavigator({navigation: {navigate}, route}) {
     </Stack.Navigator>
     // </NavigationContainer>
   );
-};
-
+}

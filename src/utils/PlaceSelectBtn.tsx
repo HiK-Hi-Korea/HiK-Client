@@ -17,9 +17,9 @@ export default function PlaceSelectBtn(props: {
     {label: 'online-transaction'},
   ]);
   const [selected, setSelected] = React.useState(filters[0]);
-  const setLocationFilter = useSetRecoilState(LocationTypeAtom);
+  // const setLocationFilter = useSetRecoilState(LocationTypeAtom);
   React.useEffect(() => {
-    setLocationFilter(selected.label);
+    // setLocationFilter(selected.label);
   }, [selected]);
 
   const callback = data => {

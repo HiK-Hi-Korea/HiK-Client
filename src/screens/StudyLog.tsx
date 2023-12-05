@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {SafeAreaView, ScrollView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useRecoilValue} from 'recoil';
 import styled from 'styled-components/native';
@@ -23,12 +23,15 @@ function StudyLog({navigation: {navigate}, route}) {
 
   const getStudyLogLists = async () => {
     try {
-      const response = await fetch('http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/user/showListDto', {
-        method: 'GET',
-        headers: {
-          'X-UserId': userIdAtomVal,
+      const response = await fetch(
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/user/showListDto',
+        {
+          method: 'GET',
+          headers: {
+            'X-UserId': userIdAtomVal,
+          },
         },
-      });
+      );
       const json = await response.json();
       setDatas(json);
       console.log(json.voiceFile);
@@ -52,6 +55,15 @@ function StudyLog({navigation: {navigate}, route}) {
     <SafeAreaView>
       <ScrollView>
         <Wrapper>
+          <TitleBox>
+            <Text style={styles.infoPageTitleStyle}>Study Logs</Text>
+            <View style={{height: 10}} />
+            <Text style={styles.textStyle}>
+              Record your conversation in 5 minutes with the one who have same
+              intimacy in the same place.
+            </Text>
+            <View style={{height: 20}} />
+          </TitleBox>
           {datas &&
             datas.map((element, idx) => {
               return (
@@ -101,6 +113,12 @@ const Wrapper = styled.View`
   margin-top: 15px;
 `;
 
+const TitleBox = styled.View`
+  display: flex;
+  width: 90%;
+  flex-direction: flex-start;
+`;
+
 const TextBox = styled.View`
   display: flex;
   flex-direction: column;
@@ -142,5 +160,9 @@ const styles = StyleSheet.create({
   },
   filterStyle: {
     color: 'black',
+  },
+  infoPageTitleStyle: {
+    fontSize: 30,
+    fontWeight: 'bold',
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {SafeAreaView, ScrollView, Text} from 'react-native';
 import styled from 'styled-components/native';
@@ -15,15 +15,17 @@ import {
 import PlaceSelectBtn from '../utils/PlaceSelectBtn';
 import SuccessButton from '../utils/SuccessButton';
 import GenerateButton from '../utils/GenerateButton';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 export default function StudyOtherFilter({navigation: {navigate}, route}) {
-  const [location, setLocation] = React.useState<string>('university');
-  const [items, setItems] = React.useState<personFilterType[]>();
-  const [pressed, setPressed] = React.useState(false);
   const personAtomVal = useRecoilValue(PersonFilterAtom);
+  const locationAtomVal = useRecoilValue(LocationTypeAtom);
   const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
   const userIdAtomVal = useRecoilValue(UserIdAtom);
+  
+  const [location, setLocation] = React.useState<string>(locationAtomVal);
+  const [items, setItems] = React.useState<personFilterType[]>();
+  const [pressed, setPressed] = React.useState(false);
   const [translatedReason, setTranslatedReason] = useState<string>();
 
   const [newTranslation, setNewTranslation] = React.useState();
@@ -67,15 +69,18 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
     };
     try {
       console.log(data);
-      const response = await fetch('http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getTrans', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'X-UserId': userIdAtomVal,
+      const response = await fetch(
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getTrans',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-UserId': userIdAtomVal,
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
       const json = await response.json();
       console.log(json.voiceFile);
       console.log(json.translatedSentence);
@@ -100,15 +105,18 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
     };
     try {
       console.log(data);
-      const response = await fetch('http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getReason', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'X-UserId': userIdAtomVal,
+      const response = await fetch(
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getReason',
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-UserId': userIdAtomVal,
+          },
+          body: JSON.stringify(data),
         },
-        body: JSON.stringify(data),
-      });
+      );
       const json = await response.json();
       setTranslatedReason(json.reason);
     } catch (error) {
@@ -168,7 +176,7 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
           </FlexRow>
           <FlexRow>
             <Text style={styles.labelStyle}>Intimacy</Text>
-            <IntimacyBtn />
+            <IntimacyBtn setPressed={setPressed} />
           </FlexRow>
           {pressed === true && newTranslation && translatedReason ? (
             <>
