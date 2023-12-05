@@ -124,6 +124,8 @@ export default function Mypage() {
     React.useCallback(() => {
       if (changedAge !== userAge) {
         setBtnActive(true);
+      } else {
+        setBtnActive(false);
       }
     }, [changedAge]),
   );
