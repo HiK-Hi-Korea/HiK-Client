@@ -396,6 +396,7 @@ const InputText = styled.TextInput`
   height: 80%;
   /* background-color: green; */
   border-radius: 10px 10px 0 0;
+  font-size: 20px;
 `;
 
 const ResultBox = styled.View`

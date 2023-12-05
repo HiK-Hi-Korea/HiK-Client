@@ -69,15 +69,15 @@ function DrawerNavigator({navigation: {navigate}}) {
       }}>
       <Drawer.Screen name="Translation" component={Translation} />
       <Drawer.Screen
-        name="StudyLog"
+        name="Study"
         component={StudyStackNavigator}
         initialParams={{setIsShown: setIsShown}}
         options={{headerShown: isShown}}
       />
       {isUser ? (
-        <Drawer.Screen name="mypage" component={Mypage} />
+        <Drawer.Screen name="My Page" component={Mypage} />
       ) : (
-        <Drawer.Screen name="login" component={Login} />
+        <Drawer.Screen name="Login" component={Login} />
       )}
     </Drawer.Navigator>
   );

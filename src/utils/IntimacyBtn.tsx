@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {useSetRecoilState} from 'recoil';
 import {IntimacyFilterAtom} from '../assets/recoilValues';
-import { useFocusEffect } from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
 
 export type intimacyFilterType = {
   label: number;
@@ -102,7 +102,8 @@ const CustomButton = (props: FilterButtonProps) => {
           props.callback(props.data);
         }
       }}>
-      <Text style={{color: props.selected ? '#1556FE' : '#696969'}}>
+      <Text
+        style={{color: props.selected ? '#1556FE' : '#696969', fontSize: 18}}>
         {props.data.label}
       </Text>
     </TouchableOpacity>
