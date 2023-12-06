@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {useSetRecoilState} from 'recoil';
 import styled from 'styled-components/native';
@@ -8,35 +8,40 @@ import {
   UserIdAtom,
   UserNameAtom,
 } from '../assets/recoilValues';
+import {WebViewBox} from './WebViewBox';
 
-export default function Login() {
+export default function Login({navigation: {navigate}}) {
   const setUserName = useSetRecoilState(UserNameAtom);
   const setUserEmail = useSetRecoilState(UserEmailAtom);
   const setUserId = useSetRecoilState(UserIdAtom);
   const setIsUser = useSetRecoilState(IsUserAtom);
-  const userLogin = async () => {
-    try {
-      const response = await fetch(
-        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/request/google',
-        {
-          method: 'GET',
-        },
-      );
-      const json = await response.json();
-      console.log(json);
-      setIsUser(true);
-      setUserId(json.id);
-      if (json.name === null) {
-        setUserName('HiK-user');
-      } else {
-        setUserName(json.name);
-      }
-      setUserEmail(json.email);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  return (
+
+  const [getWeb, setWeb] = useState(false);
+
+  // const userLogin = async () => {
+  //   try {
+  //     const response = await fetch(
+  //       'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/login/oauth2/request/google',
+  //       {
+  //         method: 'GET',
+  //       },
+  //     );
+  //     const json = await response.json();
+  //     console.log(json);
+  //     setIsUser(true);
+  //     setUserId(json.id);
+  //     if (json.name === null) {
+  //       setUserName('HiK-user');
+  //     } else {
+  //       setUserName(json.name);
+  //     }
+  //     setUserEmail(json.email);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  return getWeb === false ? (
     <Wrapper>
       <TextFlexStart>
         <Text style={styles.titleStyle}>Sign-Up and Enjoy!</Text>
@@ -48,12 +53,14 @@ export default function Login() {
         <TouchableOpacity
           style={styles.touchableStyle}
           onPress={() => {
-            userLogin;
+            setWeb(true);
           }}>
           <Text style={styles.btnTextStyle}>Login with Google</Text>
         </TouchableOpacity>
       </TouchableOpacityWrapper>
     </Wrapper>
+  ) : (
+    <WebViewBox />
   );
 }
 

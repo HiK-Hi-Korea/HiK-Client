@@ -22,7 +22,7 @@ export const UserIdAtom = atom<string>({
 
 export const IsUserAtom = atom<boolean>({
   key: 'isUser',
-  default: true,
+  default: false,
 });
 
 export const UserNameAtom = atom<string>({
