@@ -26,7 +26,7 @@ import {
 } from '../assets/recoilValues';
 import FilterBtn, {personFilterType} from '../utils/FilterBtn';
 import IntimacyBtn from '../utils/IntimacyBtn';
-import {OnlineFilter, StoreFilter, UnivFilter} from '../assets/filterValues';
+import {GeneralFilter, OnlineFilter, SchoolFilter, StoreFilter, SwimmingFilter, UnivFilter} from '../assets/filterValues';
 import {useFocusEffect} from '@react-navigation/native';
 
 // var Sound = require('react-native-sound');
@@ -55,8 +55,14 @@ export default function Translation({navigation: {navigate}}) {
         setItems(UnivFilter);
       } else if (location === 'store') {
         setItems(StoreFilter);
-      } else {
+      } else if (location === 'online') {
         setItems(OnlineFilter);
+      } else if (location === 'swimming pool') {
+        setItems(SwimmingFilter);
+      } else if (location === 'school') {
+        setItems(SchoolFilter);
+      } else {
+        setItems(GeneralFilter);
       }
     }, []),
   );
@@ -415,6 +421,7 @@ const ResultBox = styled.View`
 const GeneratedText = styled.Text`
   display: flex;
   height: 80%;
+  font-size: 20px;
 `;
 
 const styles = StyleSheet.create({

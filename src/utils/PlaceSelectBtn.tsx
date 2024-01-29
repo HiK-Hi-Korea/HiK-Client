@@ -13,8 +13,17 @@ export default function PlaceSelectBtn(props: {
 }) {
   const [filters, setFilters] = React.useState([
     {label: 'university'},
+    {label: 'school'},
     {label: 'store'},
-    {label: 'online-transaction'},
+    {label: 'online'},
+    {label: 'library'},
+    {label: 'gym'},
+    {label: 'movie_theater'},
+    {label: 'convenience_store'},
+    {label: 'restaurant'},
+    {label: 'taxi_stand'},
+    {label: 'train_station'},
+    {label: 'subway_station'},
   ]);
   const [selected, setSelected] = React.useState(filters[0]);
   // const setLocationFilter = useSetRecoilState(LocationTypeAtom);
@@ -78,7 +87,8 @@ const CustomButton = (props: FilterButtonProps) => {
           props.callback(props.data);
         }
       }}>
-      <Text style={{color: props.selected ? '#1556FE' : '#696969'}}>
+      <Text
+        style={{color: props.selected ? '#1556FE' : '#696969', fontSize: 18}}>
         {props.data.label}
       </Text>
     </TouchableOpacity>
@@ -98,8 +108,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 13,
     padding: 5,
-    paddingLeft: 30,
-    paddingRight: 30,
+    paddingLeft: 12,
+    paddingRight: 12,
     marginRight: 8,
   },
 });

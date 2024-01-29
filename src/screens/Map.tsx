@@ -26,9 +26,22 @@ export const Map = ({navigation}) => {
 
   const mApiKey = G_API_KEY;
 
-  const addTypeList = ['university', 'store'];
+  const addTypeList = [
+    'university',
+    'school',
+    'store',
+    'library',
+    'gym',
+    'movie_theater',
+    'convenience_store',
+    'restaurant',
+    'taxi_stand',
+    'train_station',
+    'subway_station',
+  ];
 
   const getAddress = () => {
+    setLocationType('university');
     fetch(
       'https://maps.googleapis.com/maps/api/geocode/json?latlng=' +
         location?.latitude +
@@ -55,19 +68,34 @@ export const Map = ({navigation}) => {
       .catch(err => console.log('udonPeople error : ' + err));
   };
 
-  React.useEffect(() => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        setLocation({latitude, longitude});
-      },
-      error => {
-        console.log(error.code, error.message);
-      },
-      // {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-    // getAddress();
-  }, []);
+  // React.useEffect(() => {
+  //   Geolocation.getCurrentPosition(
+  //     position => {
+  //       const {latitude, longitude} = position.coords;
+  //       setLocation({latitude, longitude});
+  //     },
+  //     error => {
+  //       console.log(error.code, error.message);
+  //     },
+  //     // {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+  //   );
+  //   // getAddress();
+  // }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      Geolocation.getCurrentPosition(
+        position => {
+          const {latitude, longitude} = position.coords;
+          setLocation({latitude, longitude});
+        },
+        error => {
+          console.log(error.code, error.message);
+        },
+        // {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+      );
+    }, []),
+  );
 
   // React.useEffect(() => {
   //   console.log(location);
@@ -105,14 +133,6 @@ export const Map = ({navigation}) => {
       )}
       <LocationInfoTab>
         <AskText>{`Are you here now? : ${locationType}`}</AskText>
-        {/* <Button
-          title="Yes"
-          onPress={() => {
-            getAddress();
-            // navigation.navigate('Home', {screen: 'Translation'});
-            navigation.navigate('Selection');
-          }}
-        /> */}
         <Button
           title="Yes"
           onPress={() => {
@@ -121,9 +141,9 @@ export const Map = ({navigation}) => {
         />
         <Button title="No" onPress={() => navigation.navigate('Selection')} />
         <Button
-          title="online-transaction"
+          title="online"
           onPress={() => {
-            setLocationType('online-transaction');
+            setLocationType('online');
             navigation.navigate('Home', {screen: 'Translation'});
           }}
         />

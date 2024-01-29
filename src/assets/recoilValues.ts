@@ -2,7 +2,7 @@ import {atom} from 'recoil';
 
 export const LocationTypeAtom = atom<string>({
   key: 'locationTypeAtom',
-  default: 'not found',
+  default: 'university',
 });
 
 export const PersonFilterAtom = atom<string>({

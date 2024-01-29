@@ -15,9 +15,18 @@ export default function LocationSelection({navigation}) {
       <Picker
         selectedValue={selectedLoc}
         onValueChange={itemValue => setSelectedLoc(itemValue)}>
-        <Picker.Item label="store" value="store" />
         <Picker.Item label="university" value="university" />
-        <Picker.Item label="online-transaction" value="online-transaction" />
+        <Picker.Item label="school" value="school" />
+        <Picker.Item label="store" value="store" />
+        <Picker.Item label="swimming pool" value="swimming pool" />
+        <Picker.Item label="library" value="library" />
+        <Picker.Item label="gym" value="gym" />
+        <Picker.Item label="movie_theater" value="movie_theater" />
+        <Picker.Item label="convenience_store" value="convenience_store" />
+        <Picker.Item label="restaurant" value="restaurant" />
+        <Picker.Item label="taxi_stand" value="taxi_stand" />
+        <Picker.Item label="train_station" value="train_station" />
+        <Picker.Item label="subway_station" value="subway_station" />
       </Picker>
       <Button
         title="Translation"

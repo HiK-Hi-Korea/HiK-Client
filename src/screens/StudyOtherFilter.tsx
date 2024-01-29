@@ -1,10 +1,16 @@
 import React, {useState} from 'react';
-import {StyleSheet} from 'react-native';
+import {ActivityIndicator, StyleSheet} from 'react-native';
 import {SafeAreaView, ScrollView, Text} from 'react-native';
 import styled from 'styled-components/native';
 import IntimacyBtn from '../utils/IntimacyBtn';
 import FilterBtn, {personFilterType} from '../utils/FilterBtn';
-import {OnlineFilter, StoreFilter, UnivFilter} from '../assets/filterValues';
+import {
+  GeneralFilter,
+  OnlineFilter,
+  SchoolFilter,
+  StoreFilter,
+  UnivFilter,
+} from '../assets/filterValues';
 import {useRecoilValue} from 'recoil';
 import {
   IntimacyFilterAtom,
@@ -22,13 +28,13 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
   const locationAtomVal = useRecoilValue(LocationTypeAtom);
   const intimacyAtomVal = useRecoilValue(IntimacyFilterAtom);
   const userIdAtomVal = useRecoilValue(UserIdAtom);
-  
+
   const [location, setLocation] = React.useState<string>(locationAtomVal);
   const [items, setItems] = React.useState<personFilterType[]>();
   const [pressed, setPressed] = React.useState(false);
   const [translatedReason, setTranslatedReason] = useState<string>();
 
-  const [newTranslation, setNewTranslation] = React.useState();
+  const [newTranslation, setNewTranslation] = React.useState<string>();
   const [playUrl, setPlayUrl] = React.useState('');
 
   // React.useEffect(() => {
@@ -47,11 +53,15 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
     React.useCallback(() => {
       console.log('location change');
       if (location === 'university') {
-        setItems(() => UnivFilter);
+        setItems(UnivFilter);
       } else if (location === 'store') {
-        setItems(() => StoreFilter);
+        setItems(StoreFilter);
+      } else if (location === 'online') {
+        setItems(OnlineFilter);
+      } else if (location === 'school') {
+        setItems(SchoolFilter);
       } else {
-        setItems(() => OnlineFilter);
+        setItems(GeneralFilter);
       }
       console.log(items);
     }, [location]),
@@ -59,18 +69,22 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
 
   const getOtherTranslation = async () => {
     const data = {
-      input_sentence: route.params.input_sentence,
-      prev_place: route.params.prev_place,
-      prev_listener: route.params.prev_listener,
-      prev_intimacy: route.params.prev_intimacy,
-      cur_place: location,
-      cur_listener: personAtomVal,
-      cur_intimacy: intimacyAtomVal,
+      // input_sentence: route.params.input_sentence,
+      // prev_place: route.params.prev_place,
+      // prev_listener: route.params.prev_listener,
+      // prev_intimacy: route.params.prev_intimacy,
+      // cur_place: location,
+      // cur_listener: personAtomVal,
+      // cur_intimacy: intimacyAtomVal,
+      sourceSentence: route.params.input_sentence,
+      place: location,
+      listener: personAtomVal,
+      intimacy: intimacyAtomVal,
     };
     try {
       console.log(data);
       const response = await fetch(
-        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getTrans',
+        'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getOriginalTranslate',
         {
           method: 'POST',
           headers: {
@@ -83,9 +97,10 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
       );
       const json = await response.json();
       console.log(json.voiceFile);
-      console.log(json.translatedSentence);
-      setNewTranslation(json.translatedSentence);
+      // console.log(typeof json.translatedSentence);
+      setNewTranslation(() => json.translatedSentence);
       setPlayUrl(json.voiceFile);
+      // getReason(String(json.translatedSentence));
     } catch (error) {
       console.error(error);
     } finally {
@@ -94,17 +109,19 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
 
   const getReason = async () => {
     const data = {
-      input_sentence: route.params.input_sentence,
+      input_sentence: route.params.prev_translated,
       input_place: route.params.prev_place,
       input_listener: route.params.prev_listener,
       input_intimacy: route.params.prev_intimacy,
       translated_sentence: newTranslation,
+      // translated_sentence: translatedString,
       place: location,
       listener: personAtomVal,
       intimacy: intimacyAtomVal,
     };
     try {
       console.log(data);
+      // const response = await fetch(
       const response = await fetch(
         'http://ec2-15-164-210-1.ap-northeast-2.compute.amazonaws.com:8080/content/getReason',
         {
@@ -122,14 +139,21 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
     } catch (error) {
       console.error(error);
     } finally {
-      setPressed(true);
     }
   };
 
   const handleButtonClicked = () => {
+    setPressed(true);
     getOtherTranslation();
-    getReason();
+    // getReason();
+    // setPressed(true);
   };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getReason();
+    }, [newTranslation]),
+  );
 
   return (
     <SafeAreaView>
@@ -178,15 +202,23 @@ export default function StudyOtherFilter({navigation: {navigate}, route}) {
             <Text style={styles.labelStyle}>Intimacy</Text>
             <IntimacyBtn setPressed={setPressed} />
           </FlexRow>
-          {pressed === true && newTranslation && translatedReason ? (
-            <>
-              <TransBox>
-                <Text style={styles.titleStyle}>{newTranslation}</Text>
-              </TransBox>
-              <TransBox>
-                <Text style={styles.textStyle}>{translatedReason}</Text>
-              </TransBox>
-            </>
+          {pressed === true ? (
+            newTranslation && translatedReason ? (
+              <>
+                <TransBox>
+                  <Text style={styles.titleStyle}>{newTranslation}</Text>
+                </TransBox>
+                <TransBox>
+                  <Text style={styles.textStyle}>{translatedReason}</Text>
+                </TransBox>
+              </>
+            ) : (
+              <ActivityIndicator
+                size="small"
+                color="#0000ff"
+                style={{marginTop: 10}}
+              />
+            )
           ) : (
             <>
               <GenerateButton

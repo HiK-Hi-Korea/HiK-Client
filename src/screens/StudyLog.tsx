@@ -64,7 +64,7 @@ function StudyLog({navigation: {navigate}, route}) {
             </Text>
             <View style={{height: 20}} />
           </TitleBox>
-          {datas &&
+          {datas !== undefined ? (
             datas.map((element, idx) => {
               return (
                 <TouchableOpacity
@@ -96,7 +96,10 @@ function StudyLog({navigation: {navigate}, route}) {
                   </TextBox>
                 </TouchableOpacity>
               );
-            })}
+            })
+          ) : (
+            <></>
+          )}
         </Wrapper>
       </ScrollView>
     </SafeAreaView>
